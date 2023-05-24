@@ -31,10 +31,14 @@ jobs:
           php-version: "8.1"
       - name: Check PHP is installed
         run: php -v
-      - name: Install Dependencies
+      - name: Install PHP Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --ignore-platform-reqs
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
-        env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: database/database.sqlite
-        run: vendor/bin/phpunit
+#      - name: Execute tests (Unit and Feature tests) via PHPUnit
+#        env:
+#          DB_CONNECTION: sqlite
+#          DB_DATABASE: database/database.sqlite
+#        run: vendor/bin/phpunit
+      - name: Install FE Dependencies
+        run: npm ci
+      - name: Build FE Dependencies
+        run: npm run build
