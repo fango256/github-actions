@@ -24,33 +24,29 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Cache node modules
+      - name: Cache node and composer modules
         id: cache-npm
         uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
-          # compose cache is stored in the home directory
+          # compose cache is stored in the home directory (found by running 'composer config --global --list')
           path: |
             ~/.npm
             /home/runner/.cache
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/composer.lock') }}
-      - name: List files
-        run: ls -ltra
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.1"
-      - name: Check PHP is installed
-        run: composer config --global --list
-      - name: Install PHP Dependencies
+      - name: Install PHP Packages
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --ignore-platform-reqs
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         run: vendor/bin/phpunit
-      - name: Install FE Dependencies
+      - name: Install FE Packages
         run: npm ci
-      - name: Build FE Dependencies
+      - name: Build FE Packages
         run: npm run build
       - name: Upload the artifacts
         uses: actions/upload-artifact@v2
@@ -58,8 +54,6 @@ jobs:
           name: output-artifact
           path: ./routes
           retention-days: 1
-      - name: List files2
-        run: ls /home/runner/.cache -ltrahR
 
   deploy-staging:
     runs-on: ubuntu-latest
