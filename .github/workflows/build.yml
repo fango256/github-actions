@@ -39,13 +39,23 @@ jobs:
         run: npm ci
       - name: Build FE Dependencies
         run: npm run build
+      - name: Temporarily save Docker image
+        uses: actions/upload-artifact@v2
+        with:
+          name: output-artifact
+          path: ./
+          retention-days: 1
 
   deploy:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    needs: build
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Retrieve saved Docker image
+        uses: actions/download-artifact@v2
+        with:
+          name: output-artifact
+          path: ./
