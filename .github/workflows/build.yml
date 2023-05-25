@@ -58,7 +58,7 @@ jobs:
           path: ./routes
           retention-days: 1
       - name: List files2
-        run: ls ~./composer -ltrahR
+        run: ls ~/.composer -ltrahR
 
   deploy-staging:
     runs-on: ubuntu-latest
