@@ -58,7 +58,7 @@ jobs:
           path: ./routes
           retention-days: 1
       - name: List files2
-        run: ls ~
+        run: ls ~ -ltrah
 
   deploy-staging:
     runs-on: ubuntu-latest
