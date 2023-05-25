@@ -55,7 +55,7 @@ jobs:
         run: npm ci
       - name: Build FE Dependencies
         run: npm run build
-      - name: Temporarily save Docker image
+      - name: Upload the artifacts
         uses: actions/upload-artifact@v2
         with:
           name: output-artifact
@@ -68,7 +68,7 @@ jobs:
     environment:
       name: Staging
     steps:
-      - name: Retrieve saved Docker image
+      - name: Retrieve saved artifact
         uses: actions/download-artifact@v2
         with:
           name: output-artifact
@@ -80,7 +80,7 @@ jobs:
     environment:
       name: Production
     steps:
-      - name: Retrieve saved Docker image
+      - name: Retrieve saved artifact
         uses: actions/download-artifact@v2
         with:
           name: output-artifact
