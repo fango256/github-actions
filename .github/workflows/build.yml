@@ -34,7 +34,7 @@ jobs:
           path: |
             ~/.npm
             ~/.composer
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/composer-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/composer.lock') }}
       - name: List files
         run: ls -ltra
       - name: Set up PHP
@@ -57,6 +57,8 @@ jobs:
           name: output-artifact
           path: ./routes
           retention-days: 1
+      - name: List files2
+        run: ls ~
 
   deploy-staging:
     runs-on: ubuntu-latest
