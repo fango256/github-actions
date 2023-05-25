@@ -22,6 +22,8 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Cache node modules
         id: cache-npm
         uses: actions/cache@v3
@@ -31,10 +33,8 @@ jobs:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: |
             ~/.npm
-            ${{ env.COMPOSER_HOME }}/cache
+            ~/.composer
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/composer-lock.json') }}
-      - name: Checkout code
-        uses: actions/checkout@v3
       - name: List files
         run: ls -ltra
       - name: Set up PHP
