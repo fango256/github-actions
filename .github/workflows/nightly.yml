@@ -29,13 +29,17 @@ jobs:
           role-to-assume: arn:aws:iam::929105575477:role/GitHubAction-ElasticBeanstalk
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
-      - name: Sts GetCallerIdentity
+      - name: Perform database copy
         run: |
           LATEST_SNAPSHOT=$(aws rds describe-db-snapshots \
             --db-instance-identifier database-1 \
             --query "sort_by(DBSnapshots, &SnapshotCreateTime)[-1].{id:DBSnapshotIdentifier}" --output text)
+          echo LATEST SNAPSHOT FOR RESTORE IS: $LATEST_SNAPSHOT
+          aws rds delete-db-instance --db-instance-identifier database-copied --skip-final-snapshot --no-cli-pager || exit 0
           aws rds restore-db-instance-from-db-snapshot \
             --region eu-west-2 \
-            --db-instance-identifier database-3 \
+            --db-instance-identifier database-copied \
             --db-snapshot-identifier $LATEST_SNAPSHOT \
-            --allocated-storage 20
+            --allocated-storage 20 \
+            --no-cli-pager
+          aws rds wait db-instance-available --db-instance-identifier database-copied
