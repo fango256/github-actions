@@ -31,14 +31,30 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Perform database copy
         run: |
+          CLONED_DATABASE_INSTANCE=database-copied
+
+          # Test to see the target database exists
+          EXISTING_COPIED_INSTANCE=$(aws rds describe-db-instances \
+            --query 'DBInstances[*].[DBInstanceIdentifier]' \
+            --filters Name=db-instance-id,Values=$CLONED_DATABASE_INSTANCE \
+            --output text \
+            )
+
+          # If the target database exists then delete it first
+          if [ $EXISTING_COPIED_INSTANCE ]
+          then
+            aws rds delete-db-instance --db-instance-identifier $CLONED_DATABASE_INSTANCE --skip-final-snapshot --no-cli-pager
+            aws rds wait db-instance-deleted --db-instance-identifier $CLONED_DATABASE_INSTANCE
+          fi
+
           LATEST_SNAPSHOT=$(aws rds describe-db-snapshots \
             --db-instance-identifier database-1 \
             --query "sort_by(DBSnapshots, &SnapshotCreateTime)[-1].{id:DBSnapshotIdentifier}" --output text)
           echo LATEST SNAPSHOT FOR RESTORE IS: $LATEST_SNAPSHOT
-          aws rds delete-db-instance --db-instance-identifier database-copied --skip-final-snapshot --no-cli-pager || exit 0
+
           aws rds restore-db-instance-from-db-snapshot \
             --region eu-west-2 \
-            --db-instance-identifier database-copied \
+            --db-instance-identifier $CLONED_DATABASE_INSTANCE \
             --db-snapshot-identifier $LATEST_SNAPSHOT \
             --allocated-storage 20 \
             --no-cli-pager
