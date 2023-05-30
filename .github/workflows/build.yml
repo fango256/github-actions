@@ -31,7 +31,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          role-to-assume: arn:aws:iam::929105575477:oidc-provider/token.actions.githubusercontent.com
+          role-to-assume: arn:aws:iam::929105575477:role/GitHubAction-ElasticBeanstalk
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
       - name: Sts GetCallerIdentity
