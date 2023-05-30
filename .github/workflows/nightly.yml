@@ -16,6 +16,9 @@ permissions:
   id-token: write   # This is required for requesting the JWT
   contents: read    # This is required for actions/checkout
 
+
+
+
 jobs:
   database_copy:
     runs-on: ubuntu-latest
@@ -28,4 +31,11 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Sts GetCallerIdentity
         run: |
-          aws sts get-caller-identity
+          LATEST_SNAPSHOT=$(aws rds describe-db-snapshots \
+            --db-instance-identifier database-1 \
+            --query "sort_by(DBSnapshots, &SnapshotCreateTime)[-1].{id:DBSnapshotIdentifier}" --output text)
+          aws rds restore-db-instance-from-db-snapshot \
+            --region eu-west-2 \
+            --db-instance-identifier database-3 \
+            --db-snapshot-identifier $LATEST_SNAPSHOT \
+            --allocated-storage 20
