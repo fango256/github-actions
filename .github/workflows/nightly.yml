@@ -1,31 +1,23 @@
-name: Nightly
+# This is a basic workflow to help you get started with Actions
 
+name:
+  First Cron Job
+
+# Controls when the workflow will run
 on:
+  # Triggers the workflow every 5 minutes
   schedule:
-      # * is a special character in YAML so you have to quote this string (2am every day)
-    - cron:  '0 2 * * *'
+    - cron: "*/5 * * * *"
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-env:
-  AWS_REGION : eu-west-2 # AWS London region
-
-# Permission can be added at job level or workflow level
-permissions:
-  id-token: write   # This is required for requesting the JWT
-  contents: read    # This is required for actions/checkout
-
+      # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  database_copy:
+  # This workflow contains a single job called "cron"
+  cron:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1.7.0
-        with:
-         role-to-assume: arn:aws:iam::929105575477:role/GitHubAction-ElasticBeanstalk
-         role-session-name: GitHub_to_AWS_via_FederatedOIDC
-         aws-region: ${{ env.AWS_REGION }}
-      - name: Sts GetCallerIdentity
-        run: |
-         aws sts get-caller-identity
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
